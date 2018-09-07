@@ -9,6 +9,7 @@ import argparse
 from tools import utils
 
 def video_process(filename_in, filename_out, detector_choose, speed_up, show):
+    write_codes = 'MJPG'    # modify the code to suit your system environment, or you can define -1 for manually choose this.
     if filename_in == 0:
         file_ext = 'system camera:0'
     else:
@@ -34,7 +35,7 @@ def video_process(filename_in, filename_out, detector_choose, speed_up, show):
             video_read = cv2.VideoCapture(filename_in)
             fps = video_read.get(cv2.CAP_PROP_FPS)
             size = (int(video_read.get(cv2.CAP_PROP_FRAME_WIDTH)), int(video_read.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-            video_setup = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')
+            video_setup = cv2.VideoWriter_fourcc(*write_codes)
             video_save = cv2.VideoWriter(filename_out, video_setup, fps * speed_up, size)
         except SystemError:
             raise TypeError("unsupportable input file", filename_in)
@@ -69,14 +70,14 @@ def command():
                                             "1.-i:video or image to detect\n"
                                             "2.-o:result\n"
                                             "3.-d:choose your detector\n"
-                                            "4.-s:spped up result if need\n"
+                                            "4.-s:spped up video result if need\n"
                                             "5.-v:visualize the detect result immediately",
                                      formatter_class=argparse.RawDescriptionHelpFormatter
                                      )
     parse.add_argument('-i','--input',help="video or image to detect",default=0)
     parse.add_argument('-o','--output',help="video or image result",type=str,default="result")
     parse.add_argument('-d','--detector',help="choose your detector",type=str,choices=['haar','dlib','all'],default='haar')
-    parse.add_argument('-s','--speed',help="spped up result if need",type=int,default=1)
+    parse.add_argument('-s','--speed',help="spped up video result if need",type=int,default=1)
     parse.add_argument('-v','--visualize',help="visualize the detect result immediately",type=bool,default=True)
     args = parse.parse_args()
     return args
